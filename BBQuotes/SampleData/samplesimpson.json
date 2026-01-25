@@ -1,7 +1,27 @@
 {
-    "quote_id": 1,
-    "quote": "My name is Walter Hartwell White. I live at 308 Negra Arroyo Lane, Albuquerque, New Mexico 87104.",
-    "character": "Walter White",
-    "production": "Breaking Bad",
-    "episode": 101
+  "id": 1,
+  "age": 39,
+  "birthdate": "1956-05-12",
+  "gender": "Male",
+  "name": "Homer Simpson",
+  "occupation": "Safety Inspector",
+  "portrait_path": "/character/1.webp",
+  "phrases": [
+    "Doh!",
+    "Why you little...!",
+    "Woo-hoo!",
+    "Mmm... (food)... *drooling*",
+    "Stupid Flanders!",
+    "Shut up Flanders!",
+    "AAAAGHH!",
+    "Lisa, knock off that racket!",
+    "Uh oh, the boss.",
+    "Lets all go out for frosty chocolate milkshakes!",
+    "Whatever, Ill be at Moes.",
+    "I am evil Ho-mer! I am evil Ho-mer! I am evil Ho-mer!",
+    "Better them than me.",
+    "Better them than me... Oh wait, that was me.",
+    "Marge, my face hurts again!"
+  ],
+  "status": "Alive"
 }

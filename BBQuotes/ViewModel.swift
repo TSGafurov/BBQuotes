@@ -25,6 +25,7 @@ class ViewModel {
     var quote: Quote
     var character: Char
     var episode: Episode
+    var simpson: Simpsons
     
     init() {
         let decoder = JSONDecoder()
@@ -38,6 +39,23 @@ class ViewModel {
         
         let episodeData = try! Data(contentsOf: Bundle.main.url(forResource: "sampleepisode", withExtension: "json")!)
         episode = try! decoder.decode(Episode.self, from: episodeData)
+        
+        let simpsonsData = try! Data(contentsOf: Bundle.main.url(forResource: "samplesimpson", withExtension: "json")!)
+        simpson = try! decoder.decode(Simpsons.self, from: simpsonsData)
+
+
+    }
+    
+    func getSimpson() async {
+        status = .fetching
+        
+        do {
+            simpson = try await fetcher.fetchSimpsons()
+            
+            status = .successQuote
+        } catch {
+            status = .failed(error: error)
+        }
     }
     
     func getQuote(for show: String) async {

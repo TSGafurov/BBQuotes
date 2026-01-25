@@ -9,9 +9,12 @@ import SwiftUI
 
 struct CharacterView: View {
     
+    let vm: ViewModel
     let character: Char
     let show: String
     
+    @State private var currentQuote: String?
+    @State private var isFetchingQuote = false
     
     var body: some View {
         GeometryReader { geo in
@@ -39,6 +42,39 @@ struct CharacterView: View {
                         .padding(.top, 60)
                         
                         VStack(alignment: .leading){
+                            Group  {
+                                if isFetchingQuote {
+                                    HStack(alignment: .center, spacing: 8) {
+                                        ProgressView()
+                                        Text("Loading quote…")
+                                    }
+                                    .font(.title3)
+                                    .foregroundStyle(.secondary)
+                                    .padding()
+                                    .frame(maxWidth: .infinity, alignment: .center)
+                                } else if let characterQuote = currentQuote ?? character.quote?.quote {
+                                    Text("\"\(characterQuote)\"")
+                                        .font(.title3)
+                                        .frame(maxWidth: .infinity)
+                                        .padding()
+                                        .contentShape(Rectangle())
+                                        .contentTransition(.opacity)
+                                } else {
+                                    Text("No quote available")
+                                        .font(.title3)
+                                        .foregroundStyle(.secondary)
+                                        .padding()
+                                        .frame(maxWidth: .infinity, alignment: .center)
+                                        .accessibilityAddTraits(.isButton)
+                                }
+                            }
+                            .onTapGesture {
+                                fetchNewQuote()
+                            }
+                            .frame(alignment: .center)
+                            
+                            Divider()
+                            
                             Text(character.name)
                                 .font(.largeTitle)
                             
@@ -115,9 +151,24 @@ struct CharacterView: View {
             }
         }
         .ignoresSafeArea()
+        .task {
+            currentQuote = character.quote?.quote
+        }
+    }
+    
+    private func fetchNewQuote() {
+        guard !isFetchingQuote else { return }
+        isFetchingQuote = true
+        Task {
+            await vm.fetchNewQuoteForCurrentCharacter()
+            withAnimation(.easeInOut(duration: 0.25)) {
+                currentQuote = vm.character.quote?.quote
+            }
+            isFetchingQuote = false
+        }
     }
 }
 
 #Preview {
-    CharacterView(character: ViewModel().character, show: Constants.bbName)
+    CharacterView(vm: ViewModel(), character: ViewModel().character, show: Constants.bbName)
 }

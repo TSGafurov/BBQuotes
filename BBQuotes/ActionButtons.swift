@@ -7,47 +7,51 @@
 
 import SwiftUI
 
-struct Buttons: View {
-    
-    @ObservedObject var vm: ViewModel
-    let buttonsTitles = ["Get random quote", "Get random episode", "Get random character"]
+struct ActionButtons: View {
     let show: String
-    @Binding var quoteLoaded: Bool
+    let isLoading: Bool
+    let onAction: (ActionType) -> Void
+    
+    enum ActionType {
+        case quote, episode, character
+    }
     
     var body: some View {
-        HStack(spacing: 10){
-            ForEach(buttonsTitles, id: \.self) { title in
-                Button {
-                    Task {
-                        switch title {
-                        case "Get random quote":
-                            await vm.getQuote(for: show)
-                        case "Get random episode":
-                            await vm.getEpisode(for: show)
-                        case "Get random character":
-                            await vm.getCharacter(from: show)
-                        default:
-                            break
-                        }
-                    }
-                } label: {
-                    Text(title)
-                        .font(.title3)
-                        .foregroundStyle(.white)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color(show.removeSpaces()+"Button"))
-                        .clipShape(RoundedRectangle(cornerRadius: 25))
-                        .shadow(color: Color(show.removeSpaces()+"Shadow"), radius: 2)
-                }
-                .disabled(quoteLoaded)
-            }
+        HStack(spacing: 10) {
+            button("Get random quote", action: .quote)
+            button("Get random episode", action: .episode)
+            button("Get random character", action: .character)
         }
+        .padding(.horizontal)
+    }
+    
+    private func button(_ title: String, action: ActionType) -> some View {
+        Button(title) {
+            onAction(action)
+        }
+        .font(.title3)
+        .foregroundStyle(.white)
+        .padding()
         .frame(maxWidth: .infinity)
-        .padding(.horizontal, 6)
+        .background(Color(show.removeSpaces() + "Button"))
+        .clipShape(RoundedRectangle(cornerRadius: 25))
+        .shadow(color: Color(show.removeSpaces() + "Shadow"), radius: 2)
+        .disabled(isLoading)
     }
 }
 
 #Preview {
-    Buttons(show: "Breaking Bad")
+    ActionButtons(show: "Breaking Bad", isLoading: false) { action in
+        switch action {
+        case .quote:
+            print("Get random quote tapped")
+        case .episode:
+            print("Get random episode tapped")
+        case .character:
+            print("Get random character tapped")
+        }
+    }
+    .preferredColorScheme(.dark)
+    .padding()
+    .background(.black)
 }
